@@ -1124,6 +1124,7 @@ class DeformableReactionForcesTest : public ::testing::Test {
    // Run a simulation
    std::unique_ptr<Simulator<double>> Simulate() {
      auto simulator = std::make_unique<Simulator<double>>(*diagram_);
+     simulator->set_target_realtime_rate(kTargetRealtimeRate);
      simulator->AdvanceTo(kSimulationTime);
      return simulator;
    }
@@ -1169,7 +1170,7 @@ class DeformableReactionForcesTest : public ::testing::Test {
    const double kPoissonsRatio{0.4};      // Poisson's ratio (unitless)
    const double kMassDensity{1e3};        // Mass density in kg/m³
    const double kStiffnessDamping{0.01};  // Stiffness damping in s
-   const double kResolutionHint{0.5};     // Resolution hint for mesh generation
+   const double kResolutionHint{0.05};     // Resolution hint for mesh generation
    
    // Floor parameters
    const double kFloorWidth{1.0};    // Width of the floor in m
@@ -1182,7 +1183,8 @@ class DeformableReactionForcesTest : public ::testing::Test {
    
    // Simulation parameters
    const double kTimeStep{0.001};                     // Time step in s
-   const double kSimulationTime{2.0};                 // Maximum simulation time in s
+   const double kSimulationTime{1.0};                 // Maximum simulation time in s
+   const double kTargetRealtimeRate{0};             // Target realtime rate
    const double kGravity{9.81};                       // Gravity in m/s²
    const CoulombFriction<double> kFriction{0.4, 0.4}; // Friction
    const double kTolerance{1e-6};                     // Tolerance for comparisons
