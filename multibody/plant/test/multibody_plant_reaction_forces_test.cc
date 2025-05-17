@@ -5,8 +5,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "drake/common/find_resource.h"
 #include "drake/common/drake_assert.h"
+#include "drake/common/find_resource.h"
 #include "drake/common/test_utilities/eigen_matrix_compare.h"
 #include "drake/common/test_utilities/expect_throws_message.h"
 #include "drake/geometry/drake_visualizer.h"
@@ -1029,7 +1029,8 @@ class DeformableReactionForcesTest : public ::testing::Test {
     // Add a deformable model to the plant
     DeformableModel<double>& deformable_model =
         plant_->mutable_deformable_model();
-    deformable_body_id_ = RegisterDeformableBox(&deformable_model, "deformable_box");
+    deformable_body_id_ =
+        RegisterDeformableBox(&deformable_model, "deformable_box");
     deformable_model_ptr_ = &deformable_model;
 
     // N.B. Deformables are only supported with the SAP solver.
@@ -1089,31 +1090,33 @@ class DeformableReactionForcesTest : public ::testing::Test {
   }
 
   /// Registers a deformable box with 8 vertices
-   DeformableBodyId RegisterDeformableBox(DeformableModel<double>* model,
-    std::string name) {
-      const std::string box =
-      FindResourceOrThrow("drake/multibody/plant/test/box.vtk");
-      auto geometry = std::make_unique<GeometryInstance>(RigidTransformd(Vector3d(0.0, 0.0, kInitialHeight)), 
-        std::make_unique<drake::geometry::Mesh>(box, kBoxSize), std::move(name));
+  DeformableBodyId RegisterDeformableBox(DeformableModel<double>* model,
+                                         std::string name) {
+    const std::string box =
+        FindResourceOrThrow("drake/multibody/plant/test/box.vtk");
+    auto geometry = std::make_unique<GeometryInstance>(
+        RigidTransformd(Vector3d(0.0, 0.0, kInitialHeight)),
+        std::make_unique<drake::geometry::Mesh>(box, kBoxSize),
+        std::move(name));
 
-      // Add contact properties
-      geometry::ProximityProperties props;
-      geometry::AddContactMaterial({}, {}, kFriction, &props);
-      geometry->set_proximity_properties(std::move(props));
+    // Add contact properties
+    geometry::ProximityProperties props;
+    geometry::AddContactMaterial({}, {}, kFriction, &props);
+    geometry->set_proximity_properties(std::move(props));
 
-      // Configure deformable body properties
-      fem::DeformableBodyConfig<double> body_config;
-      body_config.set_youngs_modulus(kYoungsModulus);
-      body_config.set_poissons_ratio(kPoissonsRatio);
-      body_config.set_mass_density(kMassDensity);
-      body_config.set_stiffness_damping_coefficient(kStiffnessDamping);
+    // Configure deformable body properties
+    fem::DeformableBodyConfig<double> body_config;
+    body_config.set_youngs_modulus(kYoungsModulus);
+    body_config.set_poissons_ratio(kPoissonsRatio);
+    body_config.set_mass_density(kMassDensity);
+    body_config.set_stiffness_damping_coefficient(kStiffnessDamping);
 
-      // Register the deformable body
-      constexpr double unused_resolution_hint = 1.0;
-      DeformableBodyId id = model->RegisterDeformableBody(
-          std::move(geometry), body_config, unused_resolution_hint);
+    // Register the deformable body
+    constexpr double unused_resolution_hint = 1.0;
+    DeformableBodyId id = model->RegisterDeformableBody(
+        std::move(geometry), body_config, unused_resolution_hint);
 
-      return id;
+    return id;
   }
 
   /* Computes the reference volume of the registered deformable body. */
@@ -1161,8 +1164,9 @@ class DeformableReactionForcesTest : public ::testing::Test {
     const double deformable_mass = volume * kMassDensity;
     const double deformable_weight = deformable_mass * kGravity;
     const double floor_weight = kFloorMass * kGravity;
-    
-    // The reaction force should be equal to the combined weight of the deformable object and floor
+
+    // The reaction force should be equal to the combined weight of the
+    // deformable object and floor
     const Vector3d expected_force(0.0, 0.0, deformable_weight + floor_weight);
 
     // Verify the reaction force
@@ -1186,7 +1190,7 @@ class DeformableReactionForcesTest : public ::testing::Test {
   const double kFloorMass{10.0};   // Mass of the floor in kg
 
   // Deformable box parameters
-  const double kBoxSize{0.1};        // Size of the box edge in m
+  const double kBoxSize{0.1};         // Size of the box edge in m
   const double kInitialHeight{0.06};  // Initial height of the box in m
 
   // Simulation parameters
